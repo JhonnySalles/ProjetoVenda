@@ -1,0 +1,29 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<BorlandProject>
+	<Transactions>
+    <Transaction>2019/08/06 18:17:36.000.336,=C:\Users\Jhonn\Documents\Embarcadero\Studio\Projects\Unit1.pas</Transaction>
+    <Transaction>2019/08/06 18:23:01.000.759,C:\Users\Jhonn\Documents\Embarcadero\Studio\Projects\Unit1.pas=I:\Projeto\Plataforma Vendas\uMenuPrincipal.pas</Transaction>
+    <Transaction>2019/08/06 18:23:01.000.759,C:\Users\Jhonn\Documents\Embarcadero\Studio\Projects\Unit1.dfm=I:\Projeto\Plataforma Vendas\uMenuPrincipal.dfm</Transaction>
+    <Transaction>2019/08/06 18:23:31.000.413,C:\Users\Jhonn\Documents\Embarcadero\Studio\Projects\Project1.dproj=I:\Projeto\Plataforma Vendas\PlataformaVenda.dproj</Transaction>
+    <Transaction>2019/08/06 18:24:48.000.540,=I:\Projeto\Plataforma Vendas\Unit1.pas</Transaction>
+    <Transaction>2019/08/06 18:27:26.000.410,I:\Projeto\Plataforma Vendas\Unit1.pas=I:\Projeto\Plataforma Vendas\Dao\uDtM.pas</Transaction>
+    <Transaction>2019/08/06 18:27:26.000.410,I:\Projeto\Plataforma Vendas\Unit1.dfm=I:\Projeto\Plataforma Vendas\Dao\uDtM.dfm</Transaction>
+    <Transaction>2019/08/06 18:46:34.000.006,=I:\Projeto\Plataforma Vendas\Unit1.pas</Transaction>
+    <Transaction>2019/08/06 18:47:20.000.109,I:\Projeto\Plataforma Vendas\Unit1.pas=I:\Projeto\Plataforma Vendas\View\uCadProduto.pas</Transaction>
+    <Transaction>2019/08/06 18:47:20.000.109,I:\Projeto\Plataforma Vendas\Unit1.dfm=I:\Projeto\Plataforma Vendas\View\uCadProduto.dfm</Transaction>
+    <Transaction>2019/08/06 19:23:13.000.941,=I:\Projeto\Plataforma Vendas\Unit1.pas</Transaction>
+    <Transaction>2019/08/06 19:23:27.000.365,I:\Projeto\Plataforma Vendas\Unit1.pas=I:\Projeto\Plataforma Vendas\Model\uUtils.pas</Transaction>
+    <Transaction>2019/08/06 19:34:27.000.901,=I:\Projeto\Plataforma Vendas\Unit1.pas</Transaction>
+    <Transaction>2019/08/06 19:35:07.000.991,I:\Projeto\Plataforma Vendas\Unit1.pas=I:\Projeto\Plataforma Vendas\Model\uProduto.pas</Transaction>
+    <Transaction>2019/08/06 19:48:43.000.015,=I:\Projeto\Plataforma Vendas\Unit1.pas</Transaction>
+    <Transaction>2019/08/06 19:49:25.000.019,I:\Projeto\Plataforma Vendas\Unit1.pas=I:\Projeto\Plataforma Vendas\Dao\uMySQLDao.pas</Transaction>
+    <Transaction>2019/08/06 19:49:28.000.223,=I:\Projeto\Plataforma Vendas\Unit1.pas</Transaction>
+    <Transaction>2019/08/06 19:49:51.000.163,I:\Projeto\Plataforma Vendas\Unit1.pas=I:\Projeto\Plataforma Vendas\Dao\uProdutoDao.pas</Transaction>
+    <Transaction>2019/08/06 22:07:00.000.269,=I:\Projeto\Plataforma Vendas\Unit1.pas</Transaction>
+    <Transaction>2019/08/06 22:07:20.000.095,I:\Projeto\Plataforma Vendas\Unit1.dfm=I:\Projeto\Plataforma Vendas\View\uLancamento.dfm</Transaction>
+    <Transaction>2019/08/06 22:07:20.000.094,I:\Projeto\Plataforma Vendas\Unit1.pas=I:\Projeto\Plataforma Vendas\View\uLancamento.pas</Transaction>
+    <Transaction>2019/08/07 00:08:11.040,=I:\Projeto\Plataforma Vendas\Unit1.pas</Transaction>
+    <Transaction>2019/08/07 00:08:30.634,I:\Projeto\Plataforma Vendas\View\uCustos.pas=I:\Projeto\Plataforma Vendas\Unit1.pas</Transaction>
+    <Transaction>2019/08/07 00:08:30.634,I:\Projeto\Plataforma Vendas\View\uCustos.dfm=I:\Projeto\Plataforma Vendas\Unit1.dfm</Transaction>
+  </Transactions>
+</BorlandProject>

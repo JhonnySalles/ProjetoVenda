@@ -1,0 +1,39 @@
+unit uProduto;
+
+interface
+
+uses
+  System.SysUtils;
+
+
+Type
+  TProduto = class
+  private
+    FId : Integer;
+    FNome : String;
+    FDescricao: String;
+    FCustoCompra: Currency;
+    FDespesa : Currency;
+    FMargem : Double;
+
+    procedure SetDataHora(const Value: TDateTime);
+    procedure SetDescricao(const Value: String);
+    procedure SetIDLembrete(const Value: Integer);
+    procedure SetTitulo(const Value: String);
+    { private declarations }
+  protected
+    { protected declarations }
+  public
+    { public declarations }
+    constructor Create;
+    property IDLembrete: Integer read FIDLembrete write SetIDLembrete;
+    property Titulo: String read FTitulo write SetTitulo;
+    property Descricao: String read FDescricao write SetDescricao;
+    property DataHora: TDateTime read FDataHora write SetDataHora;
+  published
+    { published declarations }
+  end;
+
+implementation
+
+end.

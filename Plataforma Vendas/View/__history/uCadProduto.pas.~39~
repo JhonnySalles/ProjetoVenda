@@ -1,0 +1,229 @@
+unit uCadProduto;
+
+interface
+
+uses
+  Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
+  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, Vcl.ExtCtrls, Vcl.Buttons,
+  uProdutoDao, uProduto;
+
+type
+  TCadProduto = class(TForm)
+    ovP_Campos: TPanel;
+    ovP_Titulo: TPanel;
+    ovL_Titulo: TLabel;
+    ovE_Id: TEdit;
+    ovE_Nome: TEdit;
+    ovE_CustoCompra: TEdit;
+    ovE_Margem: TEdit;
+    ovE_Descricao: TMemo;
+    ovL_Id: TLabel;
+    ovL_Nome: TLabel;
+    ovL_CustoCompra: TLabel;
+    ovL_Descricao: TLabel;
+    ovL_Margem: TLabel;
+    ovSB_Excluir: TSpeedButton;
+    ovSB_Novo: TSpeedButton;
+    ovSB_Salvar: TSpeedButton;
+    procedure ovSB_SalvarClick(Sender: TObject);
+    function f_ValidaCampos() : Boolean;
+    procedure p_LimpaCampos();
+    procedure ovSB_NovoClick(Sender: TObject);
+    procedure ovSB_ExcluirClick(Sender: TObject);
+    procedure ovE_MargemKeyPress(Sender: TObject; var Key: Char);
+    procedure ovE_CustoCompraKeyPress(Sender: TObject; var Key: Char);
+    procedure ovE_IdKeyPress(Sender: TObject; var Key: Char);
+    procedure FormDestroy(Sender: TObject);
+    procedure ovE_IdExit(Sender: TObject);
+    procedure ovE_NomeKeyPress(Sender: TObject; var Key: Char);
+    procedure ovE_DescricaoKeyPress(Sender: TObject; var Key: Char);
+    procedure FormClose(Sender: TObject; var Action: TCloseAction);
+    procedure ovE_CustoCompraExit(Sender: TObject);
+  private
+    ProdutoDAO: TProdutoDAO;
+    FProduto: TProduto;
+    procedure PreencherEntidade;
+    procedure PreencherTela(FProduto : TProduto);
+  public
+    constructor Create(AOwner: TComponent);
+  end;
+
+const
+  vsVazio : String = '';
+  vsZero : String = '0';
+
+var
+  CadProduto: TCadProduto;
+  vbEditar : Boolean;
+
+implementation
+
+uses
+  uUtils, uCustos;
+
+{$R *.dfm}
+
+constructor TCadProduto.Create(AOwner: TComponent);
+begin
+ inherited Create(AOwner);
+  ProdutoDAO := TProdutoDAO.Create;
+  FProduto := TProduto.Create;
+  vbEditar := False;
+end;
+
+procedure TCadProduto.FormClose(Sender: TObject; var Action: TCloseAction);
+begin
+  try
+    Custos := TCustos.Create(Self);
+    Custos.ShowModal;
+  finally
+    FreeAndNil(Custos);
+  end;
+end;
+
+procedure TCadProduto.FormDestroy(Sender: TObject);
+begin
+  try
+    if Assigned(ProdutoDAO) then
+      FreeAndNil(ProdutoDAO);
+
+    if Assigned(FProduto) then
+		  FreeAndNil(FProduto);
+
+  except
+    on e: exception do
+      raise Exception.Create(E.Message);
+  end;
+end;
+
+function TCadProduto.f_ValidaCampos: Boolean;
+begin
+  if Trim(ovE_Nome.Text) = '' then
+  begin
+    Result := False;
+    ShowMessage('Favor informar um nome.');
+    Exit;
+  end else
+    Result := True;
+end;
+
+procedure TCadProduto.ovE_CustoCompraExit(Sender: TObject);
+begin
+  uUtils.p_ExitEditMoeda(ovE_CustoCompra);
+end;
+
+procedure TCadProduto.ovE_CustoCompraKeyPress(Sender: TObject; var Key: Char);
+begin
+  uUtils.p_FormatarEditMoeda(ovE_CustoCompra, Key, 20, 2);
+end;
+
+procedure TCadProduto.ovE_DescricaoKeyPress(Sender: TObject; var Key: Char);
+begin
+  if Length(ovE_Nome.Text) >= 200 then
+    Key := #0;
+end;
+
+procedure TCadProduto.ovE_IdExit(Sender: TObject);
+begin
+ if (Trim(ovE_Id.Text) = '') or (Trim(ovE_Id.Text) = '0') then
+ begin
+  p_LimpaCampos();
+ end else
+ begin
+  FProduto.Id := StrToInt(ovE_Id.Text);
+  if ProdutoDAO.PesquisaProduto(FProduto) then
+  begin
+    vbEditar := True;
+    PreencherTela(FProduto);
+  end else
+  begin
+    ShowMessage('Produto não localizado.');
+    p_LimpaCampos();
+  end;
+ end;
+end;
+
+procedure TCadProduto.ovE_IdKeyPress(Sender: TObject; var Key: Char);
+begin
+  uUtils.p_LimitaId(ovE_Id, Key);
+end;
+
+procedure TCadProduto.ovE_MargemKeyPress(Sender: TObject; var Key: Char);
+begin
+  uUtils.p_LimitaEditNumeros(ovE_Margem, Key);
+end;
+
+procedure TCadProduto.ovE_NomeKeyPress(Sender: TObject; var Key: Char);
+begin
+  if Length(ovE_Nome.Text) >= 50 then
+    Key := #0;
+
+end;
+
+procedure TCadProduto.ovSB_ExcluirClick(Sender: TObject);
+begin
+  if Trim(ovE_Id.Text) <> vsZero then
+  begin
+    FProduto.Id := StrToInt(ovE_Id.Text);
+    if ProdutoDAO.Deletar(FProduto) then
+    begin
+      ShowMessage('Registro excluído com sucesso.');
+    end;
+  end else
+    ShowMessage('Favor informar um produto para a sua exclusão.');
+end;
+
+procedure TCadProduto.ovSB_NovoClick(Sender: TObject);
+begin
+  p_LimpaCampos();
+end;
+
+procedure TCadProduto.ovSB_SalvarClick(Sender: TObject);
+begin
+  if f_ValidaCampos then
+  begin
+    PreencherEntidade();
+    if vbEditar then
+    begin
+      if ProdutoDAO.Alterar(FProduto) then
+        ShowMessage('Registro editado com sucesso');
+    end else
+      if ProdutoDAO.Inserir(FProduto) then
+        ShowMessage('Registro Inserido com sucesso');
+
+    p_LimpaCampos();
+  end;
+end;
+
+procedure TCadProduto.PreencherEntidade;
+begin
+  FProduto.Id := StrToInt(ovE_Id.Text);
+  FProduto.Nome := ovE_Nome.Text;
+  FProduto.Descricao := ovE_Descricao.Text;
+  FProduto.CustoCompra := StrToFloat(f_RemoveMaskEditMoeda(ovE_CustoCompra.Text));
+  FProduto.Margem := StrToFloat(ovE_Margem.Text);
+end;
+
+procedure TCadProduto.PreencherTela(FProduto : TProduto);
+begin
+  ovE_Id.Text := IntToStr(FProduto.Id);
+  ovE_Nome.Text := FProduto.Nome;
+  ovE_Descricao.Text := FProduto.Descricao;
+  ovE_CustoCompra.Text := FloatToStr(FProduto.CustoCompra);
+  ovE_Margem.Text := FloatToStr(FProduto.Margem);
+end;
+
+procedure TCadProduto.p_LimpaCampos;
+begin
+  FProduto.New;
+
+  ovE_Id.Text := vsZero;
+  ovE_Nome.Text := vsVazio;
+  ovE_Descricao.Text := vsVazio;
+  ovE_CustoCompra.Text := 'R$ 0.0';
+  ovE_Margem.Text := vsZero;
+
+  vbEditar := False;
+end;
+
+end.

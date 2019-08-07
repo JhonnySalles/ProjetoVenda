@@ -1,0 +1,14 @@
+program PlataformaVenda;
+
+uses
+  Vcl.Forms,
+  uMenuPrincipal in 'uMenuPrincipal.pas' {MenuPrincipal};
+
+{$R *.res}
+
+begin
+  Application.Initialize;
+  Application.MainFormOnTaskbar := True;
+  Application.CreateForm(TMenuPrincipal, MenuPrincipal);
+  Application.Run;
+end.

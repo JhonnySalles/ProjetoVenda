@@ -1,0 +1,80 @@
+object Custos: TCustos
+  Left = 0
+  Top = 0
+  BorderIcons = []
+  Caption = 'Custos'
+  ClientHeight = 201
+  ClientWidth = 416
+  Color = clBtnFace
+  Font.Charset = DEFAULT_CHARSET
+  Font.Color = clWindowText
+  Font.Height = -11
+  Font.Name = 'Tahoma'
+  Font.Style = []
+  OldCreateOrder = False
+  OnClose = FormClose
+  OnCreate = FormCreate
+  PixelsPerInch = 96
+  TextHeight = 13
+  object Panel1: TPanel
+    Left = 0
+    Top = 0
+    Width = 416
+    Height = 201
+    Align = alClient
+    BevelOuter = bvNone
+    Color = clHotLight
+    ParentBackground = False
+    TabOrder = 0
+    ExplicitLeft = 112
+    ExplicitTop = 136
+    ExplicitWidth = 185
+    ExplicitHeight = 41
+    object ovL_Despesa: TLabel
+      Left = 144
+      Top = 24
+      Width = 113
+      Height = 20
+      Caption = 'Despesas Totais'
+      Font.Charset = DEFAULT_CHARSET
+      Font.Color = clWhite
+      Font.Height = 20
+      Font.Name = 'Tahoma'
+      Font.Style = []
+      ParentFont = False
+    end
+    object ovSB_Cancelar: TSpeedButton
+      Left = 80
+      Top = 136
+      Width = 105
+      Height = 41
+      Caption = 'Cancelar'
+      OnClick = ovSB_CancelarClick
+    end
+    object ovSB_Confirmar: TSpeedButton
+      Left = 216
+      Top = 136
+      Width = 105
+      Height = 41
+      Caption = 'Confirmar'
+      OnClick = ovSB_ConfirmarClick
+    end
+    object ovE_Despesa: TEdit
+      Left = 112
+      Top = 72
+      Width = 185
+      Height = 23
+      Alignment = taRightJustify
+      Font.Charset = DEFAULT_CHARSET
+      Font.Color = clWindowText
+      Font.Height = 15
+      Font.Name = 'Tahoma'
+      Font.Style = []
+      ParentFont = False
+      TabOrder = 0
+      Text = 'R$   0.0'
+      OnExit = ovE_DespesaExit
+      OnKeyPress = ovE_DespesaKeyPress
+    end
+  end
+end

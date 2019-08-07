@@ -1,0 +1,38 @@
+object MenuPrincipal: TMenuPrincipal
+  Left = 0
+  Top = 0
+  Caption = 'Plataforma de Vendas'
+  ClientHeight = 373
+  ClientWidth = 450
+  Color = clBtnFace
+  Font.Charset = DEFAULT_CHARSET
+  Font.Color = clWindowText
+  Font.Height = -11
+  Font.Name = 'Tahoma'
+  Font.Style = []
+  OldCreateOrder = False
+  OnCreate = FormCreate
+  OnDestroy = FormDestroy
+  PixelsPerInch = 96
+  TextHeight = 13
+  object Panel1: TPanel
+    Left = 0
+    Top = 0
+    Width = 450
+    Height = 373
+    Align = alClient
+    TabOrder = 0
+    ExplicitLeft = 96
+    ExplicitTop = 112
+    ExplicitWidth = 185
+    ExplicitHeight = 41
+    object ovSP_Cadastro: TSpeedButton
+      Left = 32
+      Top = 152
+      Width = 121
+      Height = 97
+      Caption = 'Cadastrar Produto'
+      OnClick = ovSP_CadastroClick
+    end
+  end
+end

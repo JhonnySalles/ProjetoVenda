@@ -1,0 +1,16 @@
+object DtM: TDtM
+  OldCreateOrder = False
+  Height = 211
+  Width = 322
+  object FDConnection: TFDConnection
+    Params.Strings = (
+      'DriverID=MySQL')
+    Left = 40
+    Top = 40
+  end
+  object FDPhysMySQLDriverLink: TFDPhysMySQLDriverLink
+    VendorLib = '.\$(Platform)\libmySQL.dll'
+    Left = 168
+    Top = 40
+  end
+end

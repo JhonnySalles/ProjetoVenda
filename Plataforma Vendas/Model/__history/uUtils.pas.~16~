@@ -1,0 +1,84 @@
+unit uUtils;
+
+interface
+
+uses
+  System.SysUtils, Vcl.StdCtrls;
+
+procedure p_LimitaEditNumeros(edit: TObject; var Key: Char);
+procedure p_FormatarEditMoeda(Objeto : TObject; var VKey : Char; Espaco, CasasDecimal : integer);
+procedure p_LimitaId(edit: TObject; var Key: Char);
+
+implementation
+
+procedure p_LimitaId(edit: TObject; var Key: Char);
+begin
+  if not CharInSet(Key, ['0' .. '9', #8]) then
+  begin
+    Key := #0;
+  end;
+end;
+
+procedure p_LimitaEditNumeros(edit: TObject; var Key: Char);
+begin
+  if not CharInSet(Key, ['0' .. '9', #8, '.']) then
+  begin
+    Key := #0;
+  end;
+
+  if CharInSet(Key, ['.']) then
+  begin
+    if (pos('.', TEdit(edit).Text) > 0) then
+    begin
+      Key := #0;
+    end;
+  end;
+end;
+
+procedure p_FormatarEditMoeda(Objeto : TObject; var VKey : Char; Espaco, CasasDecimal : integer);
+var
+	vChar, vDiv : String;
+	i           : integer;
+begin
+	if VKey = #13 then
+		Exit;
+
+	if pos('R$', TEdit(Objeto).Text) > 0 then
+		TEdit(Objeto).Clear;
+
+	if not CharInSet(VKey, ['0' .. '9', ',', #8]) then
+	begin
+		VKey := #0;
+		Exit;
+	end;
+
+	vDiv := '1';
+
+	for i  := 1 to CasasDecimal do
+		vDiv := vDiv + '0';
+
+	vChar := Copy(TEdit(Objeto).Text, 1, Length(TEdit(Objeto).Text));
+
+	if (vChar = '') or (vChar = '0') then
+	begin
+		if VKey <> #8 then
+			vChar := VKey
+		else
+			vChar := '0';
+	end
+	else
+		if (VKey <> #8) then
+		vChar := vChar + VKey;
+
+	while (pos(',', vChar) > 0) or (pos('.', vChar) > 0) do
+	begin
+		Delete(vChar, pos('.', vChar), 1);
+		Delete(vChar, pos(',', vChar), 1);
+	end;
+
+	TEdit(Objeto).MaxLength := Espaco;
+	TEdit(Objeto).Text      := Format('%*.*n', [Espaco, CasasDecimal, StrToFloat(vChar) / StrToInt(vDiv)]);
+	TEdit(Objeto).SelStart  := Length(TEdit(Objeto).Text);
+end;
+
+end.
