@@ -4,7 +4,7 @@ interface
 
 uses
   Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
-  Vcl.Controls, Vcl.Forms, Vcl.StdCtrls;
+  Vcl.Controls, Vcl.Forms, Vcl.StdCtrls, Vcl.ExtCtrls;
 
 type
   TListasVetores = class(TForm)
@@ -14,6 +14,10 @@ type
     ovE_Numero: TEdit;
     ovBtn_Par: TButton;
     ovBtn_Impar: TButton;
+    Panel1: TPanel;
+    Panel2: TPanel;
+    Panel3: TPanel;
+    ovL_Titulo: TLabel;
     function f_validaCampo() : Boolean;
     procedure ovE_NumeroExit(Sender: TObject);
     procedure ovE_NumeroKeyPress(Sender: TObject; var Key: Char);
