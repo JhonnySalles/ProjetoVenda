@@ -14,7 +14,6 @@ object DtM: TDtM
     Top = 40
   end
   object FDPhysMySQLDriverLink: TFDPhysMySQLDriverLink
-    VendorLib = 'I:\Projeto\Plataforma Vendas\libmySQL.dll'
     Left = 168
     Top = 40
   end
