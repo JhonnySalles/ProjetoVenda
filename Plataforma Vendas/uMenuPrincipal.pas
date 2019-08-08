@@ -4,7 +4,7 @@ interface
 
 uses
   Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
-  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, uDtM, Vcl.Buttons, Vcl.ExtCtrls, Vcl.StdCtrls;
+  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, uDtM, Vcl.Buttons, Vcl.ExtCtrls, Vcl.StdCtrls, System.IniFiles;
 
 type
   TMenuPrincipal = class(TForm)
@@ -13,11 +13,14 @@ type
     ovSB_Venda: TSpeedButton;
     Panel2: TPanel;
     ovL_Descricao: TLabel;
-    SpeedButton1: TSpeedButton;
+    Label1: TLabel;
+    ovTImg_Logo: TImage;
+    Panel3: TPanel;
     procedure FormCreate(Sender: TObject);
     procedure ovSP_CadastroClick(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
     procedure ovSB_VendaClick(Sender: TObject);
+    procedure FormClose(Sender: TObject; var Action: TCloseAction);
   private
     { Private declarations }
   public
@@ -33,28 +36,65 @@ const
 
 var
   MenuPrincipal: TMenuPrincipal;
+  ArqConfig : TIniFile;
+  vsServer, vsPort, vsDatabase, vsUser, vsPassw : String;
 
 implementation
 
 uses
-  uCadProduto, uLancamento;
+  uCadProduto, uLancamento, uConfig;
 
 {$R *.dfm}
+
+procedure TMenuPrincipal.FormClose(Sender: TObject; var Action: TCloseAction);
+begin
+  Application.Terminate;
+end;
 
 procedure TMenuPrincipal.FormCreate(Sender: TObject);
 begin
   DtM := TDtM.Create(Self);
 
-  DtM.FDPhysMySQLDriverLink.VendorLib := ExtractFilePath(Application.ExeName) + 'libmySQL.dll';
-  DtM.FDConnection.Params.Clear;
-  DtM.FDConnection.Params.Add('DriverID=MySQL');
-  DtM.FDConnection.Params.Add('CharacterSet=utf8');
-  DtM.FDConnection.Params.Add('Server='+ csIp);
-  DtM.FDConnection.Params.Add('Port='+ csPort);
-  DtM.FDConnection.Params.Add('Database=' + csDatabase);
-  DtM.FDConnection.Params.Add('User_Name=' + csUser);
-  DtM.FDConnection.Params.Add('Password=' + csPasw);
-  DtM.FDConnection.Connected := True;
+  if not FileExists(ExtractFilePath(Application.ExeName) + '\Config.ini') then
+  begin
+    try
+      Config := TConfig.Create(Self);
+      Config.ShowModal;
+    finally
+      FreeAndNil(Config);
+    end;
+  end;
+
+
+  if FileExists(ExtractFilePath(Application.ExeName) + '\Config.ini') then
+  begin
+    DtM.FDPhysMySQLDriverLink.VendorLib := ExtractFilePath(Application.ExeName) + 'libmySQL.dll';
+
+    ArqConfig := TIniFile.Create(ExtractFilePath(Application.ExeName) + '\Config.ini');
+    try
+      vsServer   := ArqConfig.ReadString('BANCO', 'server', vsServer);
+      vsPort     := ArqConfig.ReadString('BANCO', 'port', vsPort);
+      vsDatabase := ArqConfig.ReadString('BANCO', 'base', vsDatabase);
+      vsUser     := ArqConfig.ReadString('BANCO', 'user', vsUser);
+      vsPassw    := ArqConfig.ReadString('BANCO', 'passw', vsPassw);
+    finally
+      FreeAndNil(ArqConfig);
+    end;
+
+    DtM.FDConnection.Params.Clear;
+    DtM.FDConnection.Params.Add('DriverID=MySQL');
+    DtM.FDConnection.Params.Add('CharacterSet=utf8');
+    DtM.FDConnection.Params.Add('Server='+ vsServer);
+    DtM.FDConnection.Params.Add('Port='+ vsPort);
+    DtM.FDConnection.Params.Add('Database=' + vsDatabase);
+    DtM.FDConnection.Params.Add('User_Name=' + vsUser);
+    DtM.FDConnection.Params.Add('Password=' + vsPassw);
+    DtM.FDConnection.Connected := True;
+  end else
+  begin
+    ShowMessage('Não encontrado configuração com o banco, finalizando sistema.');
+    Application.Terminate;
+  end;
 end;
 
 procedure TMenuPrincipal.FormDestroy(Sender: TObject);

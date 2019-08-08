@@ -37,7 +37,6 @@ type
     procedure ovE_IdExit(Sender: TObject);
     procedure ovE_NomeKeyPress(Sender: TObject; var Key: Char);
     procedure ovE_DescricaoKeyPress(Sender: TObject; var Key: Char);
-    procedure FormClose(Sender: TObject; var Action: TCloseAction);
     procedure ovE_CustoCompraExit(Sender: TObject);
   private
     ProdutoDAO: TProdutoDAO;
@@ -45,7 +44,7 @@ type
     procedure PreencherEntidade;
     procedure PreencherTela(FProduto : TProduto);
   public
-    constructor Create(AOwner: TComponent);
+    constructor Create(AOwner: TComponent); override;
   end;
 
 const
@@ -59,7 +58,7 @@ var
 implementation
 
 uses
-  uUtils, uCustos;
+  uUtils;
 
 {$R *.dfm}
 
@@ -69,16 +68,6 @@ begin
   ProdutoDAO := TProdutoDAO.Create;
   FProduto := TProduto.Create;
   vbEditar := False;
-end;
-
-procedure TCadProduto.FormClose(Sender: TObject; var Action: TCloseAction);
-begin
-  try
-    Custos := TCustos.Create(Self);
-    Custos.ShowModal;
-  finally
-    FreeAndNil(Custos);
-  end;
 end;
 
 procedure TCadProduto.FormDestroy(Sender: TObject);
@@ -189,9 +178,10 @@ begin
         ShowMessage('Registro editado com sucesso');
     end else
       if ProdutoDAO.Inserir(FProduto) then
+      begin
         ShowMessage('Registro Inserido com sucesso');
-
-    p_LimpaCampos();
+        p_LimpaCampos();
+      end;
   end;
 end;
 
@@ -209,7 +199,7 @@ begin
   ovE_Id.Text := IntToStr(FProduto.Id);
   ovE_Nome.Text := FProduto.Nome;
   ovE_Descricao.Text := FProduto.Descricao;
-  ovE_CustoCompra.Text := 'R$ ' + FloatToStr(FProduto.CustoCompra);
+  ovE_CustoCompra.Text := Format('%m', [FProduto.CustoCompra]);
   ovE_Margem.Text := FloatToStr(FProduto.Margem);
 end;
 
@@ -220,7 +210,7 @@ begin
   ovE_Id.Text := vsZero;
   ovE_Nome.Text := vsVazio;
   ovE_Descricao.Text := vsVazio;
-  ovE_CustoCompra.Text := 'R$ 0.0';
+  ovE_CustoCompra.Text := 'R$ 0,0';
   ovE_Margem.Text := vsZero;
 
   vbEditar := False;

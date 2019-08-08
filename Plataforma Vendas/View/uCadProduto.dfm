@@ -11,7 +11,6 @@ object CadProduto: TCadProduto
   Font.Name = 'Tahoma'
   Font.Style = []
   OldCreateOrder = False
-  OnClose = FormClose
   OnDestroy = FormDestroy
   PixelsPerInch = 96
   TextHeight = 13
@@ -760,13 +759,13 @@ object CadProduto: TCadProduto
       OnKeyPress = ovE_NomeKeyPress
     end
     object ovE_CustoCompra: TEdit
-      Left = 88
+      Left = 80
       Top = 102
       Width = 170
       Height = 21
       Alignment = taRightJustify
       TabOrder = 2
-      Text = 'R$ 0.0'
+      Text = 'R$ 0,0'
       OnExit = ovE_CustoCompraExit
       OnKeyPress = ovE_CustoCompraKeyPress
     end

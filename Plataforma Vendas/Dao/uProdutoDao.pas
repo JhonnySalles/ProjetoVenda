@@ -10,7 +10,6 @@ type
   private
     FListaProduto: TObjectList<TProduto>;
     procedure PreencherColecao(Ds: TFDQuery);
-    function InsereProduto(pProduto: TProduto): TObjectList<TProduto>;
   public
     constructor Create;
     destructor Destroy; override;
@@ -19,26 +18,29 @@ type
     function Alterar(pProduto: TProduto): Boolean;
     function ListarProdutos(pProduto: TProduto): TObjectList<TProduto>;
     function PesquisaProduto(pProduto : TProduto): Boolean;
-    procedure ProcessaDespesa(Valor: Double);
+    procedure InsereCarrinho( List : TObject);
   end;
 
 const
-  csSQL_INSERIR : String = 'INSERT INTO produtos (Nome, Descricao, CustoCompra, Despesa, Margem) ' +
-    ' VALUES ( %s, %s, %s, %s, %s )';
+  csSQL_INSERIR : String = 'INSERT INTO produtos (Nome, Descricao, CustoCompra, Margem) ' +
+    ' VALUES ( %s, %s, %s, %s )';
   csSQL_DELETE : String = 'UPDATE produtos SET Situacao = "EXCLUÍDO" WHERE Id = %s ';
   csSQL_UPDATE : String = 'UPDATE produtos SET Nome = %s , Descricao = %s , CustoCompra = %s , ' +
-    ' Despesa = %s , Margem = %s WHERE Id = %s ';
-  csSQL_SELECT : String = 'SELECT Id, Nome, Descricao, CustoCompra, PrecoVenda, Despesa, Margem ' +
+    ' Margem = %s WHERE Id = %s ';
+  csSQL_SELECT : String = 'SELECT Id, Nome, Descricao, CustoCompra, Margem ' +
     ' FROM produtos WHERE 1 > 0 ';
-  csSQL_LISTAPRODUTO : String = 'SELECT Id, Nome, Descricao, CustoCompra, PrecoVenda, Despesa, Margem ' +
+  csSQL_LISTAPRODUTO : String = 'SELECT Id, Nome, Descricao, CustoCompra, Margem ' +
     ' FROM produtos WHERE 1 > 0 AND CustoCompra <> 0 AND CustoCompra IS NOT NULL ';
-  csSQL_ITENS_DESPESAS : String = 'SELECT Id, CustoCompra, PrecoVenda, Despesa, Margem FROM produtos ';
-  csSQL_UPDATE_DESPESAS : String = 'UPDATE produtos SET Despesa = %s , PrecoVenda = %s WHERE Id = %s ';
+  csSQL_INSERT_CARRINHO : String = 'INSERT INTO carrinho (Id_Produto, Quantidade, Preco, ' +
+    ' Margem, ValorTotal) VALUES ( %s, %s, %s, %s, %s ) ';
 
   csVIRGULA : String = ',';
   csPONTO : String = '.';
 
 implementation
+
+uses
+  Vcl.ComCtrls;
 
 { TLembreteDAO }
 
@@ -47,8 +49,9 @@ var
   Sql: String;
 begin
   Sql := Format(csSQL_UPDATE, [QuotedStr(pProduto.Nome),
-    QuotedStr(pProduto.Descricao), CurrToStr(pProduto.CustoCompra),
-    CurrToStr(pProduto.Despesa), FloatToStr(pProduto.Margem), IntToStr(pProduto.Id)]);
+    QuotedStr(pProduto.Descricao),
+    StringReplace(CurrToStr(pProduto.CustoCompra),',','.',[]),
+    StringReplace(FloatToStr(pProduto.Margem),',','.',[]), IntToStr(pProduto.Id)]);
   Result := ExecSQL(Sql) > 0;
 end;
 
@@ -83,8 +86,8 @@ var
   Sql: String;
 begin
   Sql := Format(csSQL_INSERIR, [QuotedStr(pProduto.Nome),
-    QuotedStr(pProduto.Descricao), CurrToStr(pProduto.CustoCompra),
-    CurrToStr(pProduto.Despesa), FloatToStr(pProduto.Margem)]);
+    QuotedStr(pProduto.Descricao), StringReplace(CurrToStr(pProduto.CustoCompra),',','.',[]),
+    StringReplace(FloatToStr(pProduto.Margem),',','.',[])]);
   Result := ExecSQL(Sql) > 0;
 end;
 
@@ -111,21 +114,22 @@ begin
   end;
 end;
 
-function TProdutoDAO.InsereProduto(pProduto: TProduto)
-  : TObjectList<TProduto>;
+procedure TProdutoDAO.InsereCarrinho(List : TObject);
 var
-  Sql: String;
+  I : Integer;
+  SQL : String;
+  vdTotal : Double;
 begin
-  Result := Nil;
-  Sql := csSQL_LISTAPRODUTO;
 
-  Sql := Sql + '  ORDER BY Nome  ';
-  FdQry := ReturnDataSet(Sql);
-
-  if not (FdQry.IsEmpty) then
+  for I := 0 to TListView(List).Items.Count - 1 do
   begin
-    PreencherColecao(FdQry);
-    Result := FListaProduto;
+    vdTotal := TProduto(TListView(List).Items[I].Data).Quantidade * TProduto(TListView(List).Items[I].Data).Preco;
+    SQL := Format(csSQL_INSERT_CARRINHO, [IntToStr(TProduto(TListView(List).Items[I].Data).Id),
+           StringReplace(FloatToStr(TProduto(TListView(List).Items[I].Data).Quantidade),',','.',[]),
+           StringReplace(FloatToStr(TProduto(TListView(List).Items[I].Data).Preco),',','.',[]),
+           StringReplace(FloatToStr(TProduto(TListView(List).Items[I].Data).Margem),',','.',[]),
+           StringReplace(FloatToStr(vdTotal),',','.',[])]);
+    ExecSQL(SQL);
   end;
 end;
 
@@ -142,8 +146,6 @@ begin
     TProduto(pProduto).Nome         := FdQry.FieldByName('Nome').AsString;
     TProduto(pProduto).Descricao    := FdQry.FieldByName('Descricao').AsString;
     TProduto(pProduto).CustoCompra  := FdQry.FieldByName('CustoCompra').AsCurrency;
-    TProduto(pProduto).Despesa      := FdQry.FieldByName('Despesa').AsCurrency;
-    TProduto(pProduto).Preco        := FdQry.FieldByName('PrecoVenda').AsCurrency;
     TProduto(pProduto).Margem       := FdQry.FieldByName('Margem').AsFloat;
     Result := True;
   end else
@@ -164,39 +166,9 @@ begin
     FListaProduto[I].Nome         := Ds.FieldByName('Nome').AsString;
     FListaProduto[I].Descricao    := Ds.FieldByName('Descricao').AsString;
     FListaProduto[I].CustoCompra  := Ds.FieldByName('CustoCompra').AsCurrency;
-    FListaProduto[I].Despesa      := Ds.FieldByName('Despesa').AsCurrency;
-    FListaProduto[I].Preco        := Ds.FieldByName('PrecoVenda').AsCurrency;
     FListaProduto[I].Margem       := Ds.FieldByName('Margem').AsFloat;
     Ds.Next;
     I := I + 1;
-  end;
-end;
-
-procedure TProdutoDAO.ProcessaDespesa(Valor : Double);
-var
-  SQL : String;
-  PrecoVenda : Currency;
-  Rateio : Double;
-  DataSet : TFDMemTable;
-begin
-  DataSet  := TFDMemTable.Create(nil);
-  try
-    FdQry := ReturnDataSet(csSQL_ITENS_DESPESAS);
-    DataSet.Data := FdQry.Data;
-
-    Rateio := Valor / DataSet.RecordCount;
-    DataSet.First;
-    while not DataSet.EoF do
-    begin
-      PrecoVenda := Rateio + DataSet.FieldByName('CustoCompra').AsFloat;
-      PrecoVenda := PrecoVenda * (1 + (DataSet.FieldByName('Margem').AsFloat / 100));
-      SQL := Format(csSQL_UPDATE_DESPESAS, [StringReplace(FloatToStr(Rateio), csVIRGULA, csPONTO, []),
-             StringReplace(CurrToStr(PrecoVenda), csVIRGULA, csPONTO, []), DataSet.FieldByName('Id').AsString]);
-      ExecSQL(SQL);
-      DataSet.Next;
-    end;
-  finally
-    FreeAndNil(DataSet);
   end;
 end;
 

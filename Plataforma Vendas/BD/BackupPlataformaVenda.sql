@@ -25,6 +25,7 @@ CREATE TABLE `carrinho` (
   `Id_Produto` int(11) NOT NULL,
   `Quantidade` double DEFAULT NULL,
   `Preco` double DEFAULT NULL,
+  `Margem` double DEFAULT NULL,
   `ValorTotal` double DEFAULT NULL,
   PRIMARY KEY (`Id`),
   KEY `Produto_Carrinho` (`Id_Produto`),
@@ -32,18 +33,6 @@ CREATE TABLE `carrinho` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 /*Data for the table `carrinho` */
-
-/*Table structure for table `despesas` */
-
-DROP TABLE IF EXISTS `despesas`;
-
-CREATE TABLE `despesas` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
-  `DespesaTotal` double DEFAULT NULL,
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
-
-/*Data for the table `despesas` */
 
 /*Table structure for table `produtos` */
 
@@ -54,19 +43,12 @@ CREATE TABLE `produtos` (
   `Nome` varchar(50) NOT NULL,
   `CustoCompra` double NOT NULL,
   `Descricao` varchar(200) DEFAULT NULL,
-  `Despesa` double DEFAULT NULL,
-  `PrecoVenda` double DEFAULT NULL,
   `Margem` double DEFAULT NULL,
   `Situacao` enum('ATIVO','EXCLUÍDO') DEFAULT 'ATIVO',
   PRIMARY KEY (`Id`)
-) ENGINE=InnoDB AUTO_INCREMENT=10 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 /*Data for the table `produtos` */
-
-insert  into `produtos`(`Id`,`Nome`,`CustoCompra`,`Descricao`,`Despesa`,`PrecoVenda`,`Margem`,`Situacao`) values 
-(1,'Teste A',100,'Teste A',33.3333333333333,146.6666,10,'EXCLUÍDO'),
-(2,'Produto B',200,'Descrição do produto B',33.3333333333333,233.3333,0,'ATIVO'),
-(3,'Produto C',300,'Descrição do produto C',33.3333333333333,333.3333,0,'ATIVO');
 
 /*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
 /*!40014 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS */;

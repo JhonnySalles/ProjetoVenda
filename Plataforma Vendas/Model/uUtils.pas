@@ -3,7 +3,7 @@ unit uUtils;
 interface
 
 uses
-  System.SysUtils, Vcl.StdCtrls;
+  System.SysUtils, Vcl.StdCtrls, System.UITypes, Winapi.Windows;
 
 procedure p_LimitaEditNumeros(edit: TObject; var Key: Char);
 procedure p_FormatarEditMoeda(Objeto : TObject; var VKey : Char; Espaco, CasasDecimal : integer);
@@ -11,6 +11,7 @@ procedure p_ExitEditMoeda(Objeto : TObject);
 procedure p_LimitaId(edit: TObject; var Key: Char);
 function f_RemoveMaskEditMoeda(Texto : String) : String;
 function f_TrocaVirgulaPorPonto(Valor : string) : String;
+function f_HexToTColor(sColor : string) : TColor;
 
 implementation
 
@@ -24,14 +25,14 @@ end;
 
 procedure p_LimitaEditNumeros(edit: TObject; var Key: Char);
 begin
-  if not CharInSet(Key, ['0' .. '9', #8, '.']) then
+  if not CharInSet(Key, ['0' .. '9', #8, ',']) then
   begin
     Key := #0;
   end;
 
-  if CharInSet(Key, ['.']) then
+  if CharInSet(Key, [',']) then
   begin
-    if (pos('.', TEdit(edit).Text) > 0) then
+    if (pos(',', TEdit(edit).Text) > 0) then
     begin
       Key := #0;
     end;
@@ -109,6 +110,11 @@ begin
 		Delete(Texto, pos('R$', Texto), 2);
 	end;
 
+  while (pos('.', Texto) > 0) do
+	begin
+		Delete(Texto, pos('.', Texto), 1);
+	end;
+
 	Result := trim(Texto);
 end;
 
@@ -126,6 +132,13 @@ begin
 		end;
 	end;
 	Result := Valor;
+end;
+
+function f_HexToTColor(sColor : string) : TColor;
+begin
+	Result := RGB(StrToInt('$' + Copy(sColor, 1, 2)),
+		StrToInt('$' + Copy(sColor, 3, 2)),
+		StrToInt('$' + Copy(sColor, 5, 2)));
 end;
 
 end.

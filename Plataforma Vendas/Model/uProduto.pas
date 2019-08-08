@@ -14,6 +14,7 @@ Type
     FCustoCompra: Currency;
     FDespesa: Currency;
     FPreco : Currency;
+    FQuantidade : Double;
     FMargem: Double;
 
     procedure SetID(const Value: Integer);
@@ -22,6 +23,7 @@ Type
     procedure SetCustoCompra(const Value: Currency);
     procedure SetDespesa(const Value: Currency);
     procedure SetMargem(const Value: Double);
+    procedure SetQuantidade(const Value : Double);
     procedure SetPreco(const Value: Currency);
 
     { private declarations }
@@ -37,9 +39,8 @@ Type
     property Despesa: Currency read FDespesa write SetDespesa;
     property Margem: Double read FMargem write SetMargem;
     property Preco: Currency read FPreco write SetPreco;
+    property Quantidade : Double read FQuantidade write SetQuantidade;
     procedure New();
-  published
-    { published declarations }
   end;
 
 const
@@ -102,7 +103,12 @@ end;
 
 procedure TProduto.SetPreco(const Value: Currency);
 begin
- FPreco := Value;
+  FPreco := Value;
+end;
+
+procedure TProduto.SetQuantidade(const Value: Double);
+begin
+  FQuantidade := Value;
 end;
 
 end.

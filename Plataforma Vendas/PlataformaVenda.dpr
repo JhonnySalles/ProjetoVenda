@@ -1,5 +1,7 @@
 program PlataformaVenda;
 
+{$R *.dres}
+
 uses
   Vcl.Forms,
   uMenuPrincipal in 'uMenuPrincipal.pas' {MenuPrincipal},
@@ -10,7 +12,7 @@ uses
   uMySQLDao in 'Dao\uMySQLDao.pas',
   uProdutoDao in 'Dao\uProdutoDao.pas',
   uLancamento in 'View\uLancamento.pas' {LancamentoPedido},
-  uCustos in 'View\uCustos.pas' {Custos};
+  uConfig in 'View\uConfig.pas' {Config};
 
 {$R *.res}
 
@@ -19,6 +21,5 @@ begin
   Application.MainFormOnTaskbar := True;
   Application.CreateForm(TDtM, DtM);
   Application.CreateForm(TMenuPrincipal, MenuPrincipal);
-  Application.CreateForm(TCustos, Custos);
   Application.Run;
 end.
