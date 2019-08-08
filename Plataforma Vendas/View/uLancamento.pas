@@ -9,26 +9,29 @@ uses
   Vcl.ExtCtrls, Vcl.Buttons,
   uProduto, uProdutoDao, generics.defaults, generics.collections,
   System.Classes, Data.DB, Vcl.Grids, Vcl.DBGrids,
-  System.UITypes;
+  System.UITypes, Vcl.WinXCtrls;
 
 type
   TLancamentoPedido = class(TForm)
-    Panel1: TPanel;
-    Panel2: TPanel;
+    ovP_Titulo: TPanel;
     ovL_Titulo: TLabel;
-    ListaProdutos: TListView;
-    ListaCarrinho: TListView;
-    ovL_Carrinho: TLabel;
+    ovP_Produtos: TPanel;
     ovL_Produtos: TLabel;
     ovL_ValorTotal: TLabel;
-    ovE_ValorTotal: TEdit;
-    ovL_Quantidade: TLabel;
-    ovE_Quantidade: TEdit;
     ovSB_Inserir: TSpeedButton;
-    ovSB_Excluir: TSpeedButton;
+    ovL_Despesas: TLabel;
+    ovS_Carrinho: TSpeedButton;
+    ovL_Quantidade: TLabel;
+    ListaProdutos: TListView;
+    ovE_ValorTotal: TEdit;
     ovE_Despesas: TEdit;
-    Label1: TLabel;
+    ovSplV_Carrinho: TSplitView;
+    ListaCarrinho: TListView;
+    ovP_Compra: TPanel;
     ovSB_Comprar: TSpeedButton;
+    ovSB_Excluir: TSpeedButton;
+    ovSB_FechaSplit: TSpeedButton;
+    ovE_Quantidade: TEdit;
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
     procedure p_CarregaLista(pListaProdutos: TList<TProduto>);
@@ -48,9 +51,15 @@ type
       Item: TListItem; State: TCustomDrawState; var DefaultDraw: Boolean);
     procedure ovSB_ComprarClick(Sender: TObject);
     procedure p_NovoCarrinho();
+    procedure ovS_CarrinhoClick(Sender: TObject);
+    procedure ovSB_FechaSplitClick(Sender: TObject);
+    procedure ListaProdutosClick(Sender: TObject);
+    procedure ovP_ProdutosClick(Sender: TObject);
+    procedure ovP_TituloClick(Sender: TObject);
   private
     ProdutoDAO: TProdutoDAO;
     FProduto: TProduto;
+    procedure p_ClosePane;
   public
     { Public declarations }
   end;
@@ -95,6 +104,11 @@ begin
     ListaCarrinho.Canvas.Brush.Color := f_HexToTColor('E0E0E0')
   else
     ListaCarrinho.Canvas.Brush.Color := clWhite;
+end;
+
+procedure TLancamentoPedido.ListaProdutosClick(Sender: TObject);
+begin
+  p_ClosePane();
 end;
 
 procedure TLancamentoPedido.ListaProdutosCustomDrawItem(Sender: TCustomListView;
@@ -154,6 +168,7 @@ end;
 procedure TLancamentoPedido.p_LimpaCampos;
 begin
   ovE_Quantidade.Text := '1';
+  ovS_Carrinho.Caption := IntToStr(ListaCarrinho.Items.Count);
 end;
 
 procedure TLancamentoPedido.p_NovoCarrinho;
@@ -216,6 +231,16 @@ begin
   p_LimitaEditNumeros(ovE_Quantidade, Key);
 end;
 
+procedure TLancamentoPedido.ovP_ProdutosClick(Sender: TObject);
+begin
+  p_ClosePane();
+end;
+
+procedure TLancamentoPedido.ovP_TituloClick(Sender: TObject);
+begin
+  p_ClosePane();
+end;
+
 procedure TLancamentoPedido.ovSB_ComprarClick(Sender: TObject);
 begin
   if ListaCarrinho.Items.Count > 0 then
@@ -240,8 +265,15 @@ begin
         p_ProcessaDespesas()
       else
         ovE_ValorTotal.Text := Format('%m', [0.00]);
+
+      p_LimpaCampos();
     end;
   end;
+end;
+
+procedure TLancamentoPedido.ovSB_FechaSplitClick(Sender: TObject);
+begin
+  ovSplV_Carrinho.Close;
 end;
 
 procedure TLancamentoPedido.ovSB_InserirClick(Sender: TObject);
@@ -253,6 +285,11 @@ begin
   end;
 
   p_LimpaCampos();
+end;
+
+procedure TLancamentoPedido.ovS_CarrinhoClick(Sender: TObject);
+begin
+  ovSplV_Carrinho.Open;
 end;
 
 procedure TLancamentoPedido.p_CarregaLista(pListaProdutos: TList<TProduto>);
@@ -268,11 +305,18 @@ begin
       tempItem := ListaProdutos.Items.Add;
       tempItem.Caption := IntToStr(TProduto(pListaProdutos[I]).Id);
       tempItem.SubItems.Add(TProduto(pListaProdutos[I]).Nome);
+      tempItem.SubItems.Add(TProduto(pListaProdutos[I]).Descricao);
       tempItem.SubItems.Add(CurrToStr(TProduto(pListaProdutos[I]).Margem));
       tempItem.SubItems.Add(Format('%m', [TProduto(pListaProdutos[I]).CustoCompra]));
       tempItem.Data := TProduto(pListaProdutos[I]);
     end;
   end
+end;
+
+procedure TLancamentoPedido.p_ClosePane();
+begin
+  if ovSplV_Carrinho.Opened then
+     ovSplV_Carrinho.Close;
 end;
 
 end.
